@@ -18,7 +18,11 @@
 --   * No table is publicly readable; candidates can only read their own rows.
 -- ============================================================================
 
-create extension if not exists pgcrypto;
+-- No extensions required: randomness uses pg_catalog.gen_random_uuid()
+-- (PostgreSQL 13+ built-in), which resolves under ANY search_path — including
+-- the `set search_path = public` pinned on the SECURITY DEFINER functions.
+-- (pgcrypto lives in Supabase's `extensions` schema, so relying on it here
+-- would break reference-code generation on a fresh project.)
 
 -- ============================================================================
 -- 1. HELPER FUNCTIONS
@@ -37,7 +41,7 @@ create or replace function public.generate_candidate_reference()
 returns trigger language plpgsql as $$
 declare
   alphabet constant text := 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
-  bytes bytea;
+  hex32 text;
   code text;
   i int;
 begin
@@ -45,10 +49,12 @@ begin
     return new;
   end if;
   loop
-    bytes := gen_random_bytes(8);
+    -- 32 hex chars from a crypto-random UUID; each pair = one random byte.
+    hex32 := replace(gen_random_uuid()::text, '-', '');
     code := 'CND-';
     for i in 0..7 loop
-      code := code || substr(alphabet, (get_byte(bytes, i) % 31) + 1, 1);
+      code := code || substr(alphabet,
+        (get_byte(decode(substr(hex32, i * 2 + 1, 2), 'hex'), 0) % 31) + 1, 1);
     end loop;
     exit when not exists (select 1 from public.candidates c where c.reference_code = code);
   end loop;
