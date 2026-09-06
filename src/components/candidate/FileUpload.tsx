@@ -8,7 +8,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { cn, formatBytes, classifyError } from "../../lib/utils";
-import { extOf, uploadWithProgress, validateFile, type FileRules } from "../../services/storage";
+import { extOf, mimeForExt, uploadWithProgress, validateFile, type FileRules } from "../../services/storage";
 import { getOwnFileUrl } from "../../services/recordings";
 import { Button, Spinner } from "../ui/core";
 
@@ -67,8 +67,9 @@ export default function FileUpload({
     setPending(file);
     setStage({ name: "uploading", pct: 0 });
     try {
-      const path = makePath(extOf(file.name));
-      await uploadWithProgress(bucket, path, file, file.type || rules.mimes[0], (pct) =>
+      const ext = extOf(file.name);
+      const path = makePath(ext);
+      await uploadWithProgress(bucket, path, file, mimeForExt(ext, file.type || rules.mimes[0]), (pct) =>
         setStage({ name: "uploading", pct })
       );
       await onUploaded(path);

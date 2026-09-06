@@ -41,6 +41,22 @@ export function extOf(name: string): string {
   return i === -1 ? "" : name.slice(i).toLowerCase();
 }
 
+/* Some browsers (often Android/Windows for .doc) report an empty file.type —
+ * derive a correct, whitelist-matching MIME from the validated extension. */
+const EXT_MIME: Record<string, string> = {
+  ".pdf": "application/pdf",
+  ".doc": "application/msword",
+  ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".webp": "image/webp",
+};
+
+export function mimeForExt(ext: string, fallback: string): string {
+  return EXT_MIME[ext] ?? fallback;
+}
+
 export function validateFile(file: File, rules: FileRules): string | null {
   const ext = extOf(file.name);
   if (!rules.accept.includes(ext)) {
@@ -103,6 +119,7 @@ export async function uploadWithProgress(
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Authorization", `Bearer ${token}`);
     xhr.setRequestHeader("apikey", supabaseAnonKey);
+    xhr.setRequestHeader("Content-Type", contentType);
     xhr.setRequestHeader("x-upsert", "false");
     xhr.timeout = 5 * 60 * 1000; // long recordings on slow mobile networks
 

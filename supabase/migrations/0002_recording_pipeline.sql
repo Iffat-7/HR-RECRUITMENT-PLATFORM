@@ -113,7 +113,8 @@ begin
     raise exception 'Invalid question status';
   end if;
 
-  select i.status as interview_status, c.user_id as owner, iq.is_required
+  select i.status as interview_status, c.user_id as owner, iq.is_required,
+         iq.status as question_status
     into v_ctx
     from public.interview_questions iq
     join public.interviews i on i.id = iq.interview_id
@@ -124,6 +125,10 @@ begin
   if v_ctx.owner is distinct from auth.uid() then raise exception 'Not your interview question'; end if;
   if v_ctx.interview_status is distinct from 'IN_PROGRESS' then
     raise exception 'Interview is not in progress';
+  end if;
+  -- Final answers are locked: a tampered client cannot revert COMPLETED/SKIPPED.
+  if v_ctx.question_status in ('COMPLETED','SKIPPED') then
+    raise exception 'This question is final and can no longer change state';
   end if;
   if p_status = 'SKIPPED' and v_ctx.is_required then
     raise exception 'Required questions cannot be skipped';
@@ -156,7 +161,7 @@ begin
     raise exception 'Unsupported recording format';
   end if;
 
-  select iq.maximum_retakes, iq.maximum_duration_seconds,
+  select iq.maximum_retakes, iq.maximum_duration_seconds, iq.status as question_status,
          i.id as interview_id, i.status as interview_status,
          c.id as candidate_id, c.user_id as owner
     into v_ctx
@@ -169,6 +174,10 @@ begin
   if v_ctx.owner is distinct from auth.uid() then raise exception 'Not your interview question'; end if;
   if v_ctx.interview_status is distinct from 'IN_PROGRESS' then
     raise exception 'Interview is not in progress';
+  end if;
+  -- Retakes happen BEFORE an answer becomes final; once COMPLETED it is locked.
+  if v_ctx.question_status = 'COMPLETED' then
+    raise exception 'This question already has a final answer';
   end if;
 
   if p_duration_seconds is null or p_duration_seconds < 1
@@ -217,10 +226,12 @@ begin
     raise exception 'Invalid file size';
   end if;
 
-  select r.status, r.interview_question_id, c.user_id as owner
+  select r.status, r.interview_question_id, c.user_id as owner, i.status as interview_status
     into v_ctx
     from public.recordings r
     join public.candidates c on c.id = r.candidate_id
+    join public.interview_questions iq on iq.id = r.interview_question_id
+    join public.interviews i on i.id = iq.interview_id
    where r.id = p_recording_id
      for update of r;
 
@@ -228,6 +239,10 @@ begin
   if v_ctx.owner is distinct from auth.uid() then raise exception 'Not your recording'; end if;
   if v_ctx.status is distinct from 'UPLOADING' then
     raise exception 'Recording was already finalized or failed';
+  end if;
+  -- Late uploads cannot mutate an interview that was already submitted/locked.
+  if v_ctx.interview_status is distinct from 'IN_PROGRESS' then
+    raise exception 'The interview is no longer in progress';
   end if;
 
   update public.recordings set status = 'SUPERSEDED'
