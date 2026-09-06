@@ -40,6 +40,10 @@ export type InterviewQuestionStatus =
   | "PENDING"
   | "PREPARING"
   | "RECORDING"
+  | "REVIEWING"
+  | "UPLOADING"
+  | "COMPLETED"
+  | "FAILED"
   | "RECORDED"
   | "SKIPPED";
 
@@ -49,7 +53,8 @@ export type RecordingStatus =
   | "PROCESSING"
   | "TRANSCRIBED"
   | "FAILED"
-  | "DELETED";
+  | "DELETED"
+  | "SUPERSEDED";
 
 export type Recommendation =
   | "STRONG_HIRE"
@@ -185,6 +190,7 @@ export interface InterviewQuestion {
   maximum_duration_seconds: number;
   preparation_time_seconds: number;
   maximum_retakes: number;
+  is_required: boolean;
   display_order: number;
   status: InterviewQuestionStatus;
   created_at: string;
@@ -198,7 +204,8 @@ export interface Recording {
   candidate_id: string;
   storage_path: string;
   file_type: "VIDEO" | "AUDIO";
-  file_size: number;
+  mime_type: string | null;
+  file_size: number | null;
   duration_seconds: number | null;
   attempt_number: number;
   status: RecordingStatus;
@@ -337,8 +344,10 @@ export const STATUS_TONES: Record<string, StatusTone> = {
   PENDING: "neutral",
   PREPARING: "warning",
   RECORDING: "danger",
+  REVIEWING: "info",
   RECORDED: "success",
   SKIPPED: "neutral",
+  SUPERSEDED: "neutral",
   VIDEO: "info",
   AUDIO: "warning",
   VIDEO_OR_AUDIO: "neutral",
@@ -376,10 +385,12 @@ export const STATUS_LABELS: Record<string, string> = {
   OFFER_EXTENDED: "Offer extended",
   NOT_STARTED: "Not started",
   IN_PROGRESS: "In progress",
+  REVIEWING: "Reviewing",
   COMPLETED: "Completed",
   SUBMITTED: "Submitted",
   EXPIRED: "Expired",
   CANCELLED: "Cancelled",
+  SUPERSEDED: "Retaken",
   VIDEO: "Video",
   AUDIO: "Audio",
   VIDEO_OR_AUDIO: "Video or audio",

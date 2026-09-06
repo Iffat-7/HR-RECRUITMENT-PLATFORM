@@ -21,6 +21,7 @@ import { listQuestionSets } from "../../services/catalog";
 import { statusChangeSchema, type StatusChangeInput } from "../../lib/validation/schemas";
 import { classifyError, formatDate, formatDateTime, formatCurrency, type AppError } from "../../lib/utils";
 import { Badge, Button, Card, Skeleton, StatusBadge } from "../../components/ui/core";
+import RecordingsPanel from "../../components/admin/RecordingsPanel";
 import { Field, SelectInput, TextArea } from "../../components/ui/fields";
 import { Modal, ErrorState, useToast } from "../../components/ui/feedback";
 import { PageHeader, CopyChip, DefRow } from "../../components/shared";
@@ -252,10 +253,10 @@ export default function CandidateDetail() {
                 ))}
               </ul>
             )}
-            <p className="mt-3 rounded-lg bg-paper px-3 py-2 text-[11.5px] leading-relaxed text-ink-500">
-              Recording capture and playback arrive in V1.2 — the storage and metadata foundation is already in place.
-            </p>
           </Card>
+
+          {/* Recorded answers — signed-URL playback, metadata-only listing */}
+          <RecordingsPanel interviews={detail.interviews} />
 
           {/* Applications */}
           <Card className="p-5 animate-fade-up [animation-delay:140ms]">

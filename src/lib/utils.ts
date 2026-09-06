@@ -154,6 +154,11 @@ export function classifyError(err: unknown): AppError {
   if (code === "23514" || code === "23502") {
     return { kind: "validation", message: "Some values are invalid. Check the form and try again." };
   }
+  // P0001 = RAISE EXCEPTION inside a SECURITY DEFINER function. These messages
+  // are written by us (safe, user-facing) — surface them verbatim.
+  if (code === "P0001" && e?.message) {
+    return { kind: "validation", message: e.message };
+  }
   if (msg.includes("fetch") || msg.includes("network") || e?.status === 0) {
     return { kind: "network", message: "Network error — check your connection and retry." };
   }

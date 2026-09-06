@@ -38,8 +38,8 @@ export default function Instructions() {
         <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-primary-700">Step 2 — Instructions</p>
         <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-ink-900">How your recorded interview works</h1>
         <p className="mt-1.5 text-sm leading-relaxed text-ink-500">
-          Five minutes of reading now saves you retakes later. The recording module ships in V1.2 — the rules below
-          are already configured per question by the recruitment team.
+          Five minutes of reading now saves you retakes later. Every rule below — prep time, duration, retakes — comes
+          from your frozen question snapshot, so it can't change mid-interview.
         </p>
       </div>
 

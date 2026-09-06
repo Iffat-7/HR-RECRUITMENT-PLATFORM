@@ -204,7 +204,7 @@ export default function Questions() {
         </div>
       )}
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit question" : "New question"} subtitle="These limits drive the future recording flow (V1.2): prep timer, max duration, retakes." wide>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit question" : "New question"} subtitle="These limits drive the live recording flow: prep timer, max duration, retakes — frozen into each interview." wide>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
           <Field label="Question text" required error={form.formState.errors.question_text?.message}>
             <TextArea rows={3} placeholder='e.g. "Describe a project you shipped under a tight deadline."' invalid={!!form.formState.errors.question_text} {...form.register("question_text")} />

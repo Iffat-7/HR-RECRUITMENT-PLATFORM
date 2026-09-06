@@ -125,6 +125,19 @@ export async function changeCandidateStatus(
   unwrap(res);
 }
 
+/** Update the signed-in candidate's own CV / photo pointers (server-restricted columns). */
+export async function updateCandidateFiles(args: {
+  cv_path?: string | null;
+  profile_photo_path?: string | null;
+}): Promise<void> {
+  unwrap(
+    await supabase.rpc("update_candidate_files", {
+      p_cv_path: args.cv_path ?? null,
+      p_profile_photo_path: args.profile_photo_path ?? null,
+    })
+  );
+}
+
 /** Instantiates an interview and snapshots the question set (immune to later edits). */
 export async function createInterview(
   candidateId: string,

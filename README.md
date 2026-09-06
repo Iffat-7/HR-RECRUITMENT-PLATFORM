@@ -1,10 +1,29 @@
 # TalentGate — HR Recruitment & Video Interview Platform
 
-**V1.1 — Foundation, Architecture & Database**
+**V1.2 — Candidate File Uploads + Browser Video/Audio Recording**
 
-A recruitment platform where candidates register, complete position-specific interview questions and (in a later milestone) record video/audio answers in-browser; HR recruiters and reviewers manage the pipeline, score candidates and keep a full audit trail.
+A recruitment platform where candidates register, upload CV/photo, and record video/audio answers in-browser with prep timers, hard time caps, previews, retake limits and resumable uploads; HR reviewers play answers back through short-lived signed URLs and score candidates with a full audit trail.
 
-> V1.1 deliberately stops at the foundation: schema, RLS, auth, storage structure, admin console shell, candidate portal shell, validation and service layers. No recorder, no AI, no integrations yet — those are staged for V1.2–V1.4.
+> Milestones: V1.1 shipped the foundation (schema, RLS, auth, storage, consoles). V1.2 adds the real recording pipeline. Transcription/AI assist, reports and integrations remain staged for V1.3–V1.4.
+
+## V1.2 database migration
+
+Run `supabase/migrations/0002_recording_pipeline.sql` after 0001 (SQL Editor → Run). It adds:
+
+- `recordings.mime_type`, widened status domains (`SUPERSEDED`, question `COMPLETED/FAILED/REVIEWING/UPLOADING`), `interview_questions.is_required` (backfilled)
+- SECURITY DEFINER lifecycle functions: `start_interview` (server-side CV gate), `update_interview_question_status` (cannot set COMPLETED), `prepare_recording` → `finalize_recording` / `fail_recording` (two-phase upload; paths minted server-side; attempts, MIME, size and duration enforced in Postgres), `submit_interview` (blocks until required answers are in), `update_candidate_files`
+- `supabase/verify.sql` — assertion script: 17 tables, RLS 17/17, 3 private buckets, 12 functions, V1.2 columns
+
+## Recording & upload flow
+
+1. Candidate starts the interview (`start_interview` — requires CV, sets statuses + history + audit)
+2. Per question: device check → prep countdown → recording (auto-stop at `maximum_duration_seconds`) → local preview → retake (limited, enforced in DB) or submit
+3. Submit = two-phase: `prepare_recording` validates ownership/attempts/MIME and returns a server-generated path `{candidate_id}/interviews/{interview_id}/{question_id}/{uuid}.{ext}`; the blob uploads via XHR with progress; `finalize_recording` flips the row to UPLOADED, supersedes the previous take (kept for audit) and marks the question COMPLETED
+4. Refresh mid-flight? Uploaded answers persist; interrupted uploads are marked FAILED on resume without consuming an attempt
+5. `submit_interview` locks the session, moves candidate → UNDER_REVIEW with status history
+6. HR plays answers on the candidate profile via 120-second signed URLs (metadata-only listing; no public links anywhere)
+
+**Browser note:** MIME is negotiated via `MediaRecorder.isTypeSupported` (webm/opus on Chrome/Edge/Firefox/Android, mp4 on Safari). Device errors are mapped to human-readable help; streams are released on unmount.
 
 ---
 
@@ -96,11 +115,11 @@ supabase/migrations/0001_foundation.sql
 - **Private storage.** No public buckets; paths are `{candidate_id}/…` and policies only allow the owning candidate or HR. Playback will use expiring signed URLs (V1.2).
 - **No secrets in the client.** Only the anon key ships; reference codes are random so candidate counts can't be guessed; CNIC is masked in the UI.
 
-## V1.1 scope
+## Current scope (V1.1 + V1.2)
 
-**In:** schema & migrations, RLS, roles + role assignment UI, auth & protected routes, candidate registration (validated, consent-captured), positions/questions/question-sets CRUD + builder, interview creation with frozen snapshots, evaluation submission with DB-driven categories, audit log viewer, honest empty/loading/error states, live platform-health console.
+**In:** schema & migrations (0001 + 0002), RLS, roles + role assignment UI, auth & protected routes, candidate registration (validated, consent-captured), positions/questions/question-sets CRUD + builder, interview creation with frozen snapshots, evaluation submission with DB-driven categories, audit log viewer, live platform-health console, **CV + photo uploads (validated, progress, retry)**, **in-browser video/audio recording with prep timer, hard duration cap, preview, DB-enforced retake limits, two-phase resumable uploads, refresh-resume**, and **HR signed-URL playback**.
 
-**Out (by design):** recording capture/uploads (V1.2), transcripts & AI assist (V1.3), reports (V1.3), WhatsApp/n8n/CRM/email (V1.4), CV/photo upload widgets (V1.2 — buckets ready).
+**Out (by design):** transcripts & AI assist (V1.3), reports (V1.3), WhatsApp/n8n/CRM/email (V1.4), true multipart/resumable-chunk uploads (V1.2 ships reliable retryable uploads — see code comments), candidate-side playback of own recordings (not requested).
 
 ## Testing
 
@@ -121,6 +140,6 @@ RLS smoke test (SQL editor, as anon/another user): `select * from public.candida
 
 ## Roadmap
 
-- **V1.2** — MediaRecorder capture (video/audio/either), prep timer, max duration & retakes, resumable private uploads, CV/photo upload widgets.
+- ~~**V1.2** — MediaRecorder capture (video/audio/either), prep timer, max duration & retakes, resumable private uploads, CV/photo upload widgets.~~ ✅ shipped
 - **V1.3** — transcription, reviewer-assist summaries (human decides), reporting dashboards.
 - **V1.4** — WhatsApp notifications, n8n hooks, CRM & email integrations.

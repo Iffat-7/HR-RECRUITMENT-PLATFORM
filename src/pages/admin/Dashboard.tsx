@@ -189,7 +189,7 @@ export default function Dashboard() {
                   Foundation milestone
                 </Badge>
                 <p className="mt-2 text-xs leading-relaxed text-ink-500">
-                  The recording pipeline (V1.2) will surface in-progress interviews and upload health here.
+                  In-progress interviews and per-answer recording status appear on each candidate's profile.
                 </p>
               </div>
             </Card>

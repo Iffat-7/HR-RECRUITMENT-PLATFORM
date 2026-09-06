@@ -35,10 +35,13 @@ const SHIPPED = [
   "Private storage buckets: CVs, profile photos, interview recordings",
   "Zod validation shared by forms and database constraints",
   "Audit log + status-history trail wired through SECURITY DEFINER functions",
+  "In-browser recording: prep timer, hard time cap, preview, enforced retake limits",
+  "CV + photo uploads with validation, progress, retry & server-side path control",
+  "Interrupted-interview resume — uploaded answers survive refresh & reconnect",
+  "HR playback via 2-minute signed URLs — never public links",
 ];
 
 const PLANNED = [
-  { v: "V1.2", items: ["MediaRecorder capture (video / audio / either)", "Prep timer, max duration & retake limits", "Resumable uploads with progress"] },
   { v: "V1.3", items: ["AI transcription of answers", "Reviewer assist summaries (never auto-decisions)", "Reporting dashboards"] },
   { v: "V1.4", items: ["WhatsApp notifications", "n8n workflow hooks", "CRM & email integrations"] },
 ];

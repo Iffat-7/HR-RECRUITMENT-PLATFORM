@@ -122,7 +122,7 @@ export default function Settings() {
             ))}
           </ul>
           <p className="mt-3 text-xs leading-relaxed text-ink-500">
-            Uploads are not wired yet (V1.2) — the buckets and their RLS policies are created by the foundation migration.
+            CV, photo and recording uploads write only under the owner's candidate folder; HR playback uses expiring signed URLs.
           </p>
         </Card>
 

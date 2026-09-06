@@ -108,9 +108,9 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       </nav>
       <div className="border-t border-navy-700/60 px-5 py-4">
         <p className="font-mono text-[10px] leading-relaxed tracking-wide text-navy-300/80">
-          V1.1 — FOUNDATION
+          V1.2 — RECORDING PIPELINE
           <br />
-          Recorder ships in V1.2
+          AI assist planned for V1.3
         </p>
       </div>
     </div>
