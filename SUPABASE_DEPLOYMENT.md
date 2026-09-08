@@ -105,7 +105,7 @@ select table_name, column_name from information_schema.columns
    and ((table_name = 'recordings' and column_name = 'mime_type')
      or (table_name = 'interview_questions' and column_name = 'is_required'));
 
--- 6. Seeds present                         → expected: 4 and 7
+-- 6. Seeds present                         → expected: 2 and 7
 select count(*) from public.roles;
 select count(*) from public.evaluation_categories;
 ```
@@ -114,20 +114,24 @@ select count(*) from public.evaluation_categories;
 
 ---
 
-## Create your first HR (SUPER_ADMIN) user
+## Create your first HR user
 
 1. In the app, click **HR sign in** → register/login is handled by Supabase Auth. The simplest path: Dashboard → **Authentication** → **Users** → **Add user** → enter your email + password (uncheck "auto confirm" only if you want the email flow).
-2. Then grant the role (SQL Editor):
+2. Then grant the HR role (SQL Editor):
 
 ```sql
 insert into public.user_roles (user_id, role_id, granted_by)
 select u.id, r.id, u.id
   from auth.users u, public.roles r
  where u.email = 'you@yourcompany.com'      -- ← your email
-   and r.name = 'SUPER_ADMIN';
+   and r.name = 'HR';
 ```
 
-3. Sign in at `/login` — you'll land in the admin console. Recruiters/reviewers are then managed in **Team & roles** inside the app.
+3. Sign in at `/login` — you'll land in the admin console.
+
+**Note:** There are only two roles in the system:
+- **HR** — The recruiter who manages candidates, positions, and evaluations
+- **CANDIDATE** — The job seeker (assigned automatically when they register)
 
 ---
 

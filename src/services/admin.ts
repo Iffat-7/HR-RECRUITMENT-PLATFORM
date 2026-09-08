@@ -19,7 +19,7 @@ export async function listRoles(): Promise<Role[]> {
   return unwrap(res) as Role[];
 }
 
-/** Grant is enforced server-side: RLS only allows SUPER_ADMIN / ADMIN inserts. */
+/** Grant is enforced server-side: RLS only allows HR inserts. */
 export async function grantRole(userId: string, roleId: string): Promise<void> {
   const res = await supabase
     .from("user_roles")

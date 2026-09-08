@@ -61,10 +61,8 @@ export function PageHeader({
 /* ---------------- Role badge ---------------- */
 
 const ROLE_TONES: Record<string, StatusTone> = {
-  SUPER_ADMIN: "danger",
-  ADMIN: "info",
-  RECRUITER: "success",
-  REVIEWER: "warning",
+  HR: "info",
+  CANDIDATE: "success",
 };
 
 export function RoleBadge({ role }: { role: string }) {

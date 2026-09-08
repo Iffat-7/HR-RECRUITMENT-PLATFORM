@@ -1,6 +1,6 @@
 /** Domain types for TalentGate V1.1 — mirrors supabase/migrations/0001_foundation.sql */
 
-export type RoleName = "SUPER_ADMIN" | "ADMIN" | "RECRUITER" | "REVIEWER";
+export type RoleName = "HR" | "CANDIDATE";
 
 export type ResponseType = "VIDEO" | "AUDIO" | "VIDEO_OR_AUDIO";
 
@@ -362,10 +362,8 @@ export const STATUS_TONES: Record<string, StatusTone> = {
   MAYBE: "warning",
   NO_HIRE: "danger",
   STRONG_NO_HIRE: "danger",
-  SUPER_ADMIN: "danger",
-  ADMIN: "info",
-  RECRUITER: "success",
-  REVIEWER: "warning",
+  HR: "info",
+  CANDIDATE: "success",
 };
 
 export const STATUS_LABELS: Record<string, string> = {

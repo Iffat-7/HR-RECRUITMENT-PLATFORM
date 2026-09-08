@@ -75,12 +75,12 @@ The **service-role key is never referenced** anywhere in this codebase and must 
    - RLS enabled on every table with role-aware policies
    - 3 **private** storage buckets with per-owner policies
 3. (Optional) Auth → Providers → Email: adjust confirmation settings to taste; the candidate flow handles the "confirm your email" case.
-4. Create your first **SUPER_ADMIN**: sign the user up via Auth, then in SQL:
+4. Create your first **HR** user: sign the user up via Auth, then in SQL:
 
 ```sql
 insert into public.user_roles (user_id, role_id)
 select u.id, r.id from auth.users u, public.roles r
-where u.email = 'you@company.com' and r.name = 'SUPER_ADMIN';
+where u.email = 'you@company.com' and r.name = 'HR';
 ```
 
 5. Reload the app — the landing page's live console and Admin → Settings report per-subsystem health.
