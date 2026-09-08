@@ -93,7 +93,7 @@ export default function UsersPage() {
         <EmptyState
           icon={<Users className="h-5.5 w-5.5" />}
           title="No team members yet"
-          body="Invite users from the Supabase Auth dashboard, then assign SUPER_ADMIN, ADMIN, RECRUITER or REVIEWER roles here."
+          body="Invite users from the Supabase Auth dashboard, then assign the HR role here."
         />
       )}
 

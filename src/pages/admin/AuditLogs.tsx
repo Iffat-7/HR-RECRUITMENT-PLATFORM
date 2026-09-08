@@ -48,7 +48,7 @@ export default function AuditLogs() {
     <div>
       <PageHeader
         title="Audit logs"
-        description="An append-only trail of meaningful actions — written by server-side database functions, never from client-side code alone. Visible to ADMIN and SUPER_ADMIN only."
+        description="An append-only trail of meaningful actions — written by server-side database functions, never from client-side code alone. Visible to HR only."
         crumbs={[{ label: "Admin", to: "/admin" }, { label: "Audit logs" }]}
       />
 

@@ -82,7 +82,7 @@ export default function Login() {
           </h1>
           <ul className="mt-8 space-y-4">
             {[
-              { icon: <ShieldCheck className="h-4 w-4" />, text: "Role-based access — SUPER_ADMIN, ADMIN, RECRUITER, REVIEWER — checked in PostgreSQL, not just the UI." },
+              { icon: <ShieldCheck className="h-4 w-4" />, text: "Role-based access — HR and CANDIDATE roles — checked in PostgreSQL, not just the UI." },
               { icon: <Lock className="h-4 w-4" />, text: "Candidate recordings live in private buckets and are played back through expiring signed URLs." },
               { icon: <ScrollText className="h-4 w-4" />, text: "Every status change and evaluation lands in an immutable audit trail." },
             ].map((b) => (

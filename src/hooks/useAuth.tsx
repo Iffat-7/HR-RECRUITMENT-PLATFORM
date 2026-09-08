@@ -28,7 +28,7 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const HR_ROLES: RoleName[] = ["SUPER_ADMIN", "ADMIN", "RECRUITER", "REVIEWER"];
+const HR_ROLES: RoleName[] = ["HR"];
 
 function isSchemaError(err: unknown): boolean {
   const e = err as { code?: string; message?: string } | null;
