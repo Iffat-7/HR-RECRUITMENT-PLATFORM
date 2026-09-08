@@ -26,7 +26,7 @@ const schema = candidateRegistrationBaseSchema
 type FormInput = z.infer<typeof schema>;
 
 export default function CandidateRegister() {
-  const { user, candidate, refreshIdentity } = useAuth();
+  const { user, profile, candidate, refreshIdentity } = useAuth();
   const navigate = useNavigate();
   const { push } = useToast();
   const [positions, setPositions] = useState<Position[]>([]);
@@ -42,9 +42,11 @@ export default function CandidateRegister() {
     formState: { errors },
   } = useForm<FormInput>({ resolver: zodResolver(schema) });
 
+  // Pre-fill from Google / existing profile (read-only fields)
   useEffect(() => {
     if (user?.email) setValue("email", user.email);
-  }, [user, setValue]);
+    if (profile?.full_name) setValue("full_name", profile.full_name);
+  }, [user, profile, setValue]);
 
   useEffect(() => {
     listPositions(true)
@@ -157,7 +159,14 @@ export default function CandidateRegister() {
             <legend className="px-2 font-mono text-[10.5px] font-semibold uppercase tracking-[0.16em] text-ink-400">Personal details</legend>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Full name" required error={errors.full_name?.message}>
-                <TextInput placeholder="e.g. Ayesha Khan" autoComplete="name" invalid={!!errors.full_name} {...register("full_name")} />
+                <TextInput
+                  placeholder="e.g. Ayesha Khan"
+                  autoComplete="name"
+                  readOnly={!!profile?.full_name}
+                  className={profile?.full_name ? "bg-ink-900/4 text-ink-500" : undefined}
+                  invalid={!!errors.full_name}
+                  {...register("full_name")}
+                />
               </Field>
               <Field label="Father / Husband name" error={errors.father_husband_name?.message}>
                 <TextInput placeholder="Optional" {...register("father_husband_name")} />

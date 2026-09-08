@@ -64,6 +64,8 @@ The **service-role key is never referenced** anywhere in this codebase and must 
 
 ## Supabase setup
 
+**Start here:** [`SUPABASE_DEPLOYMENT.md`](SUPABASE_DEPLOYMENT.md) — step-by-step deployment for an empty project, and [`V1.2_SMOKE_TEST.md`](V1.2_SMOKE_TEST.md) for post-deployment testing.
+
 1. Create a project at supabase.com (or use the provided project).
 2. Open **SQL Editor**, paste the entire contents of `supabase/migrations/0001_foundation.sql` and run it. This creates:
    - 17 tables with UUID keys, FKs, CHECK/UNIQUE constraints and indexes
