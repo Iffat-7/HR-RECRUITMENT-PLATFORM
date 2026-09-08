@@ -129,6 +129,39 @@ select u.id, r.id, u.id
 
 3. Sign in at `/login` — you'll land in the admin console. Recruiters/reviewers are then managed in **Team & roles** inside the app.
 
+---
+
+## Optional — Enable Google Sign-In
+
+The app supports Google OAuth out of the box. To enable it:
+
+### 1. Create a Google OAuth client
+1. Go to [Google Cloud Console → Credentials](https://console.cloud.google.com/apis/credentials).
+2. Click **Create credentials → OAuth client ID**.
+3. Application type: **Web application**.
+4. Under **Authorized redirect URIs**, add:
+   ```
+   https://khaxdoosuzzanardcnjx.supabase.co/auth/v1/callback
+   ```
+   (Replace `khaxdoosuzzanardcnjx` with your actual project ref if different.)
+5. Click **Create**. Copy the **Client ID** and **Client Secret**.
+
+### 2. Configure Supabase
+1. In Supabase Dashboard → **Authentication → Providers → Google**.
+2. Toggle **Enable** on.
+3. Paste the **Client ID** and **Client Secret** from step 1.
+4. Click **Save**.
+
+### 3. Run the Google Sign-In migration
+In the SQL Editor, run `supabase/migrations/0003_google_signin.sql`. This updates the `handle_new_user` trigger to also capture `avatar_url` from Google's OAuth metadata.
+
+### 4. Test it
+Go to `/login` → click **Continue with Google**. After the OAuth flow, you'll be redirected back and signed in. First-time users land on the candidate portal to complete registration.
+
+> **Note:** Google Sign-In is optional. The email/password flow works independently and is always available.
+
+---
+
 ## Environment variables (for the frontend only)
 
 Already documented in `.env.example`. Only two exist, both public-by-design:
