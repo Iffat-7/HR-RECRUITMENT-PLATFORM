@@ -26,8 +26,10 @@ export default function Login() {
   // Route once identity is known
   useEffect(() => {
     if (initializing || !user) return;
-    if (isHr) navigate("/admin", { replace: true });
-    else navigate("/candidate", { replace: true }); // candidates + fresh Google sign-ins
+    if (isHr) {
+      navigate("/admin", { replace: true });
+    }
+    // Don't auto-redirect if user has no roles - let them see the message below
   }, [initializing, user, isHr, navigate]);
 
   const onSubmit = async (input: LoginInput) => {
@@ -160,6 +162,50 @@ export default function Login() {
               {verifying ? "Verifying…" : "Sign in"}
             </Button>
           </form>
+
+          {/* Show message if user is logged in but has no roles */}
+          {user && !isHr && !initializing && (
+            <div className="mt-6 rounded-xl border border-warning-600/30 bg-warning-100/60 px-4 py-4">
+              <div className="flex items-start gap-3">
+                <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-warning-600" />
+                <div className="flex-1">
+                  <p className="text-[13px] font-semibold text-warning-700">No HR role assigned</p>
+                  <p className="mt-1 text-[12.5px] leading-relaxed text-warning-700">
+                    You're signed in as <span className="font-semibold">{user.email}</span>, but your account doesn't have the HR role yet.
+                  </p>
+                  <div className="mt-3 rounded-lg bg-white/60 px-3 py-2.5">
+                    <p className="text-[11.5px] font-semibold text-ink-700">To get HR access:</p>
+                    <ol className="mt-1.5 space-y-1 text-[11.5px] text-ink-600">
+                      <li>1. Go to Supabase Dashboard → Authentication → Users</li>
+                      <li>2. Find your account and copy your User UID</li>
+                      <li>3. Run this SQL in the SQL Editor:</li>
+                    </ol>
+                    <code className="mt-2 block rounded bg-ink-900/5 px-2 py-1.5 font-mono text-[10.5px] text-ink-700">
+                      INSERT INTO user_roles (user_id, role_id)<br />
+                      VALUES ('YOUR_UID', 'YOUR_HR_ROLE_ID');
+                    </code>
+                    <p className="mt-2 text-[11px] text-ink-500">
+                      Or use the quick setup in GETTING_STARTED.md
+                    </p>
+                  </div>
+                  <div className="mt-3 flex gap-2">
+                    <button
+                      onClick={() => supabase.auth.signOut()}
+                      className="rounded-lg bg-white px-3 py-1.5 text-[12px] font-semibold text-ink-700 transition-colors hover:bg-ink-900/5"
+                    >
+                      Sign out
+                    </button>
+                    <Link
+                      to="/candidate"
+                      className="rounded-lg bg-primary-600 px-3 py-1.5 text-[12px] font-semibold text-white transition-colors hover:bg-primary-700"
+                    >
+                      Go to candidate portal
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="mt-8 rounded-xl border border-line bg-white px-4 py-3.5">
             <p className="text-[12.5px] leading-relaxed text-ink-500">
