@@ -26,10 +26,19 @@ export default function Login() {
   // Route once identity is known
   useEffect(() => {
     if (initializing || !user) return;
+    
+    console.log("Login redirect check:", {
+      userEmail: user.email,
+      isHr,
+      initializing
+    });
+    
     if (isHr) {
+      console.log("User is HR, redirecting to /admin");
       navigate("/admin", { replace: true });
+    } else {
+      console.log("User is NOT HR, staying on login page");
     }
-    // Don't auto-redirect if user has no roles - let them see the message below
   }, [initializing, user, isHr, navigate]);
 
   const onSubmit = async (input: LoginInput) => {

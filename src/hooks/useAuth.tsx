@@ -77,13 +77,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Roles (SECURITY DEFINER function — never lies about other users' roles)
     try {
       const { data: r, error } = await supabase.rpc("get_user_roles");
+      console.log("get_user_roles result:", { data: r, error });
       if (error) {
         if (isSchemaError(error)) setDbReady(false);
         setRoles([]);
       } else {
-        setRoles(((r ?? []) as { role_name: string }[]).map((x) => x.role_name as RoleName));
+        const roleNames = ((r ?? []) as { role_name: string }[]).map((x) => x.role_name as RoleName);
+        console.log("Roles loaded:", roleNames);
+        setRoles(roleNames);
       }
-    } catch {
+    } catch (err) {
+      console.error("Error loading roles:", err);
       setRoles([]);
     }
     // Candidate record (for the candidate portal)
