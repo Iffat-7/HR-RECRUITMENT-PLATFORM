@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Database, HardDrive, KeyRound, Server, ShieldCheck } from "lucide-react";
 import { runHealthChecks, environmentSummary, type HealthCheck } from "../../services/system";
-import { supabaseAnonKey } from "../../lib/supabase/client";
+import { SUPABASE_ANON_KEY } from "../../lib/supabase/client";
 import { maskKey } from "../../lib/utils";
 import { Badge, Card, Skeleton } from "../../components/ui/core";
 import { PageHeader, CopyChip, DefRow } from "../../components/shared";
@@ -88,7 +88,7 @@ export default function Settings() {
               <span className="break-all font-mono text-xs">{env.url}</span>
             </DefRow>
             <DefRow label="Anon key (public)">
-              <span className="font-mono text-xs">{maskKey(supabaseAnonKey)}</span>
+              <span className="font-mono text-xs">{maskKey(SUPABASE_ANON_KEY)}</span>
             </DefRow>
             <DefRow label="Service role key">
               <span className="inline-flex items-center gap-1.5 font-semibold text-success-700">

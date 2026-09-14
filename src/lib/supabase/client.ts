@@ -9,13 +9,20 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
  * project's frontend; it belongs exclusively on a trusted server (see README).
  */
 
-const FALLBACK_URL = "https://khaxdoosuzzanardcnjx.supabase.co";
-const FALLBACK_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtoYXhkb29zdXp6YW5hcmRjbmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2NjQ1NTUsImV4cCI6MjEwNDI0MDU1NX0.Rg4PlwOFu3u0UQl9020q4GeVcCwFusUEHDRCGGf_Rbs";
+// Require environment variables - fail fast if missing
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabaseUrl: string = import.meta.env.VITE_SUPABASE_URL || FALLBACK_URL;
-export const supabaseAnonKey: string =
-  import.meta.env.VITE_SUPABASE_ANON_KEY || FALLBACK_ANON_KEY;
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    'Missing required environment variables: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set. ' +
+    'See .env.example for configuration instructions.'
+  );
+}
+
+// After validation, these are guaranteed to be strings
+export const SUPABASE_URL: string = supabaseUrl;
+export const SUPABASE_ANON_KEY: string = supabaseAnonKey;
 
 export const projectRef = (() => {
   try {
