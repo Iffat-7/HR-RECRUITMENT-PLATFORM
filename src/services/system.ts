@@ -1,4 +1,4 @@
-import { supabase, projectRef, supabaseUrl } from "../lib/supabase/client";
+import { supabase, projectRef, SUPABASE_URL } from "../lib/supabase/client";
 
 export type HealthState = "checking" | "operational" | "pending" | "error";
 
@@ -101,5 +101,5 @@ export async function runHealthChecks(): Promise<HealthCheck[]> {
 }
 
 export function environmentSummary() {
-  return { projectRef, url: supabaseUrl };
+  return { projectRef, url: SUPABASE_URL };
 }

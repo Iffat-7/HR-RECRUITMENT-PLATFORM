@@ -1,4 +1,4 @@
-import { supabase, supabaseAnonKey, supabaseUrl } from "../lib/supabase/client";
+import { supabase, SUPABASE_ANON_KEY, SUPABASE_URL } from "../lib/supabase/client";
 import type { AppError } from "../lib/utils";
 
 /**
@@ -110,7 +110,7 @@ export async function uploadWithProgress(
     } satisfies AppError;
   }
 
-  const url = `${supabaseUrl}/storage/v1/object/${bucket}/${path}`;
+  const url = `${SUPABASE_URL}/storage/v1/object/${bucket}/${path}`;
   // Re-wrap with the whitelisted content type so bucket MIME policies pass.
   const body = new Blob([data], { type: contentType });
 
@@ -118,7 +118,7 @@ export async function uploadWithProgress(
     const xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-    xhr.setRequestHeader("apikey", supabaseAnonKey);
+    xhr.setRequestHeader("apikey", SUPABASE_ANON_KEY);
     xhr.setRequestHeader("Content-Type", contentType);
     xhr.setRequestHeader("x-upsert", "false");
     xhr.timeout = 5 * 60 * 1000; // long recordings on slow mobile networks
