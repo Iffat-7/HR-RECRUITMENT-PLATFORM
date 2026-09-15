@@ -67,13 +67,28 @@ export class ErrorBoundary extends Component<Props, State> {
             </p>
 
             {import.meta.env.DEV && this.state.error && (
-              <details className="mb-6 p-4 bg-paper rounded-lg border border-line">
+              <details className="mb-6 p-4 bg-paper rounded-lg border border-line" open>
                 <summary className="cursor-pointer text-sm font-semibold text-ink-700 mb-2">
                   Error Details (Development Only)
                 </summary>
-                <pre className="text-xs text-ink-600 overflow-auto max-h-48">
-                  {this.state.error.toString()}
-                </pre>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-xs font-semibold text-ink-700 mb-1">Error Name:</p>
+                    <p className="text-xs text-ink-600 font-mono">{this.state.error.name}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-ink-700 mb-1">Error Message:</p>
+                    <p className="text-xs text-ink-600 font-mono">{this.state.error.message}</p>
+                  </div>
+                  {this.state.error.stack && (
+                    <div>
+                      <p className="text-xs font-semibold text-ink-700 mb-1">Stack Trace:</p>
+                      <pre className="text-xs text-ink-600 overflow-auto max-h-48 font-mono whitespace-pre-wrap">
+                        {this.state.error.stack}
+                      </pre>
+                    </div>
+                  )}
+                </div>
               </details>
             )}
 

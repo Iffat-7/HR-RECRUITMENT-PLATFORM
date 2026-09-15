@@ -79,10 +79,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data: r, error } = await supabase.rpc("get_user_roles");
       console.log("get_user_roles result:", { data: r, error });
       if (error) {
+        console.error("get_user_roles error:", error);
         if (isSchemaError(error)) setDbReady(false);
         setRoles([]);
+      } else if (!r || !Array.isArray(r)) {
+        console.warn("get_user_roles returned non-array data:", r);
+        setRoles([]);
       } else {
-        const roleNames = ((r ?? []) as { role_name: string }[]).map((x) => x.role_name as RoleName);
+        const roleNames = r
+          .filter((item) => item && typeof item === "object" && "role_name" in item)
+          .map((item) => (item as { role_name: string }).role_name)
+          .filter((name) => typeof name === "string") as RoleName[];
         console.log("Roles loaded:", roleNames);
         setRoles(roleNames);
       }
