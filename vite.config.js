@@ -4,6 +4,12 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  resolve: {
+    dedupe: ["react", "react-dom"],
+  },
+  optimizeDeps: {
+    include: ["react", "react-dom", "react-hook-form", "@hookform/resolvers"],
+  },
   server: {
     host: "0.0.0.0",
     port: 3000,
